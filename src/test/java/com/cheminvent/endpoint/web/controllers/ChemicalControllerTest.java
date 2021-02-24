@@ -1,6 +1,7 @@
 package com.cheminvent.endpoint.web.controllers;
 
 import com.cheminvent.endpoint.model.Chemical;
+import com.cheminvent.endpoint.model.ReagentState;
 import com.cheminvent.endpoint.repositories.ChemicalRepository;
 import com.cheminvent.endpoint.web.domain.ChemicalDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,6 +40,7 @@ class ChemicalControllerTest {
                 .name("Water")
                 .CAS_reg("7732-18-5")
                 .stockQuantity(100)
+                .reagentState(ReagentState.LIQUID)
                 .build();
     }
 

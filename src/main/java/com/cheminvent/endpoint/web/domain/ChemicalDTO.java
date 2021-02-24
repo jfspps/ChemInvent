@@ -1,5 +1,6 @@
 package com.cheminvent.endpoint.web.domain;
 
+import com.cheminvent.endpoint.model.ReagentState;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -7,10 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 import javax.validation.constraints.Positive;
-import java.sql.Timestamp;
-import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -29,6 +27,9 @@ public class ChemicalDTO {
 //
 //    @Null
 //    private Timestamp lastModifiedDate;
+
+    @NotNull
+    private ReagentState reagentState;
 
     @NotNull
     private String CAS_reg;
