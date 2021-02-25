@@ -37,7 +37,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 // setup MockMvc with REST docs
 @ExtendWith(RestDocumentationExtension.class)
-@AutoConfigureRestDocs
+// customise this annotation if you want to build docs on an API running from a remote server
+@AutoConfigureRestDocs(uriScheme = "https", uriHost = "com.yourPage.something", uriPort = 80)
 @WebMvcTest(ChemicalController.class)
 @ComponentScan(basePackages = "com.cheminvent.endpoint.web.mappers")
 class ChemicalControllerTest {
