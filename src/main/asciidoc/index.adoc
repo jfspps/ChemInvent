@@ -1,14 +1,15 @@
-= ChemInvent Service Docs;
+= ChemInvent Service Docs
 :doctype: book
 :icons: font
 :source-highlighter: highlightjs
 
 Sample application demonstrating how to use Spring REST Docs with JUnit 5.
 
-`ChemicalControllerTest` makes a call to a very simple service and produces three
-documentation snippets.
+`ChemicalControllerTest` makes a call to a service. The following snippets were derived from
 
-GET Chemical
+{snippets}
+
+*GET Chemical*
 
 One showing how to make a request using cURL:
 
@@ -28,7 +29,7 @@ include::{snippets}/v1/chemicals-getById/response-body.adoc[]
 Response Fields:
 include::{snippets}/v1/chemicals-getById/response-fields.adoc[]
 
-NEW Chemical reagent
+*NEW Chemical reagent*
 
 One showing how to make a request using cURL:
 
@@ -42,7 +43,7 @@ And one showing the HTTP response:
 
 include::{snippets}/v1/chemicals-save/http-response.adoc[]
 
-Response Body:v1/chemicals-savev1/beer-new/response-body.adoc[]
+Response Body:{snippets}/v1/chemicals-save/response-body.adoc[]
 
 Request Fields
 include::{snippets}/v1/chemicals-save/request-fields.adoc[]
