@@ -87,7 +87,7 @@ class ChemicalControllerTest {
                 .param("isAnalyticalSample", "no")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andDo(document("v1/chemicals",
+                .andDo(document("v1/chemicals-getById",
                         pathParameters(parameterWithName("chemicalId").description("UUID of given chemical reagent")),
                         requestParameters(parameterWithName("isAnalyticalSample").description("Reagent is of analytical grade")),
                         // document DTO properties returned from the API (note that none or all properties must be described
@@ -118,7 +118,7 @@ class ChemicalControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(chemicalDTOToJSON))
                 .andExpect(status().isCreated())
-                .andDo(document("v1/chemicals",
+                .andDo(document("v1/chemicals-save",
                         requestFields(
                                 fields.withPath("id").ignored(),
                                 fields.withPath("version").ignored(),
