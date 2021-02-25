@@ -21,7 +21,14 @@ import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+
+// start documenting controller methods
+// import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -54,9 +61,14 @@ class ChemicalControllerTest {
     void getChemicalsById() throws Exception {
         given(chemicalRepository.findById(any())).willReturn(Optional.of(Chemical.builder().build()));
 
-        mockMvc.perform(get("/api/v1/chemicals/" + UUID.randomUUID().toString())
+        // instead of adding chemicalId as a parameter, pass a randon UUID to chemicalId and request REST docs to document
+        // said parameter
+        mockMvc.perform(get("/api/v1/chemicals/{chemicalId}", UUID.randomUUID().toString())
                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+        .andDo(document("v1/chemicals", pathParameters(
+                parameterWithName("chemicalId").description("UUID of given chemical reagent")
+        )));
     }
 
     @Test
