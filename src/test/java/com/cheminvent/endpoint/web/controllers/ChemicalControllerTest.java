@@ -27,8 +27,7 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -74,6 +73,9 @@ class ChemicalControllerTest {
                 // document DTO properties returned from the API (note that none or all properties must be described
                 responseFields(
                         fieldWithPath("id").description("Database ID of reagent"),
+                        fieldWithPath("version").description("API version number"),
+                        fieldWithPath("createdDate").description("Date when record was created"),
+                        fieldWithPath("lastModifiedDate").description("Date when record was last modified"),
                         fieldWithPath("reagentState").description("Physical state of the reagent at RTP"),
                         fieldWithPath("name").description("Catalogue name of reagent"),
                         fieldWithPath("stockQuantity").description("Quantity of reagent available"),
@@ -86,10 +88,23 @@ class ChemicalControllerTest {
         ChemicalDTO chemicalDTO = getValidChemicalDTO();
         String chemicalDTOToJSON = objectMapper.writeValueAsString(chemicalDTO);
 
+        // document the persistence layer objects (DTO converted to model, then saved);
+        // note that some DTO fields are ignored
         mockMvc.perform(put("/api/v1/chemicals/" + UUID.randomUUID().toString())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(chemicalDTOToJSON))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isNoContent())
+        .andDo(document("v1/chemicals",
+                requestFields(
+                        fieldWithPath("id").ignored(),
+                        fieldWithPath("version").ignored(),
+                        fieldWithPath("createdDate").ignored(),
+                        fieldWithPath("lastModifiedDate").ignored(),
+                        fieldWithPath("reagentState").description("Physical state of the reagent at RTP"),
+                        fieldWithPath("name").description("Catalogue name of reagent"),
+                        fieldWithPath("stockQuantity").description("Quantity of reagent available"),
+                        fieldWithPath("cas_reg").description("Chemical Abstract Service registry number")
+        )));
     }
 
     @Test

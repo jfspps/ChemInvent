@@ -10,6 +10,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import javax.validation.constraints.Positive;
+import java.sql.Timestamp;
 import java.util.UUID;
 
 @Data
@@ -18,18 +19,20 @@ import java.util.UUID;
 @Builder
 public class ChemicalDTO {
 
+    // note that the DTO object need not reveal all Chemical properties
     @Null
     private UUID id;
 
-//    @Null
-//    private Long version;
-//
-//    @Null
-//    private Timestamp createdDate;
-//
-//    @Null
-//    private Timestamp lastModifiedDate;
+    @Null
+    private Long version;
 
+    @Null
+    private Timestamp createdDate;
+
+    @Null
+    private Timestamp lastModifiedDate;
+
+    // the following are returned in the DTO returned
     @NotNull
     private ReagentState reagentState;
 
