@@ -27,6 +27,8 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -68,8 +70,15 @@ class ChemicalControllerTest {
                 .andExpect(status().isOk())
         .andDo(document("v1/chemicals",
                 pathParameters(parameterWithName("chemicalId").description("UUID of given chemical reagent")),
-                requestParameters(parameterWithName("isAnalyticalSample").description("Reagent is of analytical grade"))
-                ));
+                requestParameters(parameterWithName("isAnalyticalSample").description("Reagent is of analytical grade")),
+                // document DTO properties returned from the API (note that none or all properties must be described
+                responseFields(
+                        fieldWithPath("id").description("Database ID of reagent"),
+                        fieldWithPath("reagentState").description("Physical state of the reagent at RTP"),
+                        fieldWithPath("name").description("Catalogue name of reagent"),
+                        fieldWithPath("stockQuantity").description("Quantity of reagent available"),
+                        fieldWithPath("cas_reg").description("Chemical Abstract Service registry number")
+                )));
     }
 
     @Test

@@ -8,7 +8,9 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import javax.validation.constraints.Positive;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -16,9 +18,9 @@ import javax.validation.constraints.Positive;
 @Builder
 public class ChemicalDTO {
 
-//    @Null
-//    private UUID id;
-//
+    @Null
+    private UUID id;
+
 //    @Null
 //    private Long version;
 //
