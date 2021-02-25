@@ -27,8 +27,7 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -61,14 +60,16 @@ class ChemicalControllerTest {
     void getChemicalsById() throws Exception {
         given(chemicalRepository.findById(any())).willReturn(Optional.of(Chemical.builder().build()));
 
-        // instead of adding chemicalId as a parameter, pass a randon UUID to chemicalId and request REST docs to document
-        // said parameter
+        // instead of adding chemicalId as a path parameter, pass a random UUID to chemicalId and request REST docs to document
+        // said path parameter; query parameter not part of controller but documented anyway
         mockMvc.perform(get("/api/v1/chemicals/{chemicalId}", UUID.randomUUID().toString())
+                .param("isAnalyticalSample", "no")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-        .andDo(document("v1/chemicals", pathParameters(
-                parameterWithName("chemicalId").description("UUID of given chemical reagent")
-        )));
+        .andDo(document("v1/chemicals",
+                pathParameters(parameterWithName("chemicalId").description("UUID of given chemical reagent")),
+                requestParameters(parameterWithName("isAnalyticalSample").description("Reagent is of analytical grade"))
+                ));
     }
 
     @Test
