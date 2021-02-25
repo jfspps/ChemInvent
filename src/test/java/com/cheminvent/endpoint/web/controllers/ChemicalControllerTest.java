@@ -14,7 +14,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.constraints.ConstraintDescriptions;
+import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.util.StringUtils;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -22,14 +25,14 @@ import java.util.UUID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
-// start documenting controller methods
-// import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+// start documenting controller methods (updates get(), put() etc.)
+// import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 // setup MockMvc with REST docs
@@ -48,13 +51,29 @@ class ChemicalControllerTest {
     @MockBean
     ChemicalRepository chemicalRepository;
 
-    ChemicalDTO getValidChemicalDTO() {
+    private ChemicalDTO getValidChemicalDTO() {
         return ChemicalDTO.builder()
                 .name("Water")
                 .CAS_reg("7732-18-5")
                 .stockQuantity(100)
                 .reagentState(ReagentState.LIQUID)
                 .build();
+    }
+
+    // set up Constraints fields (required for request-fields fields descriptors)
+    private static class ConstrainedFields {
+
+        private final ConstraintDescriptions constraintDescriptions;
+
+        ConstrainedFields(Class<?> input) {
+            this.constraintDescriptions = new ConstraintDescriptions(input);
+        }
+
+        private FieldDescriptor withPath(String path) {
+            return fieldWithPath(path).attributes(key("constraints").value(StringUtils
+                    .collectionToDelimitedString(this.constraintDescriptions
+                            .descriptionsForProperty(path), ". ")));
+        }
     }
 
     @Test
@@ -67,46 +86,51 @@ class ChemicalControllerTest {
                 .param("isAnalyticalSample", "no")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-        .andDo(document("v1/chemicals",
-                pathParameters(parameterWithName("chemicalId").description("UUID of given chemical reagent")),
-                requestParameters(parameterWithName("isAnalyticalSample").description("Reagent is of analytical grade")),
-                // document DTO properties returned from the API (note that none or all properties must be described
-                responseFields(
-                        fieldWithPath("id").description("Database ID of reagent"),
-                        fieldWithPath("version").description("API version number"),
-                        fieldWithPath("createdDate").description("Date when record was created"),
-                        fieldWithPath("lastModifiedDate").description("Date when record was last modified"),
-                        fieldWithPath("reagentState").description("Physical state of the reagent at RTP"),
-                        fieldWithPath("name").description("Catalogue name of reagent"),
-                        fieldWithPath("stockQuantity").description("Quantity of reagent available"),
-                        fieldWithPath("cas_reg").description("Chemical Abstract Service registry number")
-                )));
+                .andDo(document("v1/chemicals",
+                        pathParameters(parameterWithName("chemicalId").description("UUID of given chemical reagent")),
+                        requestParameters(parameterWithName("isAnalyticalSample").description("Reagent is of analytical grade")),
+                        // document DTO properties returned from the API (note that none or all properties must be described
+                        responseFields(
+                                fieldWithPath("id").description("Database ID of reagent"),
+                                fieldWithPath("version").description("API version number"),
+                                fieldWithPath("createdDate").description("Date when record was created"),
+                                fieldWithPath("lastModifiedDate").description("Date when record was last modified"),
+                                fieldWithPath("reagentState").description("Physical state of the reagent at RTP"),
+                                fieldWithPath("name").description("Catalogue name of reagent"),
+                                fieldWithPath("stockQuantity").description("Quantity of reagent available"),
+                                fieldWithPath("cas_reg").description("Chemical Abstract Service registry number")
+                        )));
     }
 
+    // POST new Chemical entity
     @Test
     void saveNewChemicals() throws Exception {
         ChemicalDTO chemicalDTO = getValidChemicalDTO();
         String chemicalDTOToJSON = objectMapper.writeValueAsString(chemicalDTO);
 
+        // add constraints
+        ConstrainedFields fields = new ConstrainedFields(ChemicalDTO.class);
+
         // document the persistence layer objects (DTO converted to model, then saved);
         // note that some DTO fields are ignored
-        mockMvc.perform(put("/api/v1/chemicals/" + UUID.randomUUID().toString())
+        mockMvc.perform(post("/api/v1/chemicals/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(chemicalDTOToJSON))
-                .andExpect(status().isNoContent())
-        .andDo(document("v1/chemicals",
-                requestFields(
-                        fieldWithPath("id").ignored(),
-                        fieldWithPath("version").ignored(),
-                        fieldWithPath("createdDate").ignored(),
-                        fieldWithPath("lastModifiedDate").ignored(),
-                        fieldWithPath("reagentState").description("Physical state of the reagent at RTP"),
-                        fieldWithPath("name").description("Catalogue name of reagent"),
-                        fieldWithPath("stockQuantity").description("Quantity of reagent available"),
-                        fieldWithPath("cas_reg").description("Chemical Abstract Service registry number")
-        )));
+                .andExpect(status().isCreated())
+                .andDo(document("v1/chemicals",
+                        requestFields(
+                                fields.withPath("id").ignored(),
+                                fields.withPath("version").ignored(),
+                                fields.withPath("createdDate").ignored(),
+                                fields.withPath("lastModifiedDate").ignored(),
+                                fields.withPath("reagentState").description("Physical state of the reagent at RTP"),
+                                fields.withPath("name").description("Catalogue name of reagent"),
+                                fields.withPath("stockQuantity").description("Quantity of reagent available"),
+                                fields.withPath("cas_reg").description("Chemical Abstract Service registry number")
+                        )));
     }
 
+    // PUT or update chemical entity
     @Test
     void updateChemicalsById() throws Exception {
         ChemicalDTO chemicalDTO = getValidChemicalDTO();

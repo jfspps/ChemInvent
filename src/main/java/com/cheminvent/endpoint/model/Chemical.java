@@ -40,6 +40,5 @@ public class Chemical {
 
     private String name;
     private Integer stockQuantity;
-
     private ReagentState reagentState;
 }

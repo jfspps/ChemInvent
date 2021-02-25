@@ -1,6 +1,7 @@
 package com.cheminvent.endpoint.bootstrap;
 
 import com.cheminvent.endpoint.model.Chemical;
+import com.cheminvent.endpoint.model.ReagentState;
 import com.cheminvent.endpoint.repositories.ChemicalRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -18,22 +19,28 @@ public class AddChemicals implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        if (chemicalRepository.count() == 0){
+        if (chemicalRepository.count() == 0) {
 
             chemicalRepository.save(Chemical.builder()
-            .CAS_reg("108-24-7")
-            .name("Acetic Anhydride")
-            .stockQuantity(3).build());
+                    .CAS_reg("108-24-7")
+                    .name("Acetic Anhydride")
+                    .stockQuantity(3)
+                    .reagentState(ReagentState.SOLID)
+                    .build());
 
             chemicalRepository.save(Chemical.builder()
                     .CAS_reg("67-64-1")
                     .name("Acetone")
-                    .stockQuantity(2).build());
+                    .stockQuantity(2)
+                    .reagentState(ReagentState.LIQUID)
+                    .build());
 
             chemicalRepository.save(Chemical.builder()
                     .CAS_reg("7681-11-0")
                     .name("Potassium Iodide")
-                    .stockQuantity(10).build());
+                    .stockQuantity(10)
+                    .reagentState(ReagentState.SOLID)
+                    .build());
         }
 
         log.info("Added " + chemicalRepository.count() + " items(s) to the database");

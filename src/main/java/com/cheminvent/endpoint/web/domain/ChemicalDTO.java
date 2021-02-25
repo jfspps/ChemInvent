@@ -6,11 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
-import javax.validation.constraints.Positive;
-import java.sql.Timestamp;
+import javax.validation.constraints.*;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Data
@@ -27,10 +24,10 @@ public class ChemicalDTO {
     private Long version;
 
     @Null
-    private Timestamp createdDate;
+    private OffsetDateTime createdDate;
 
     @Null
-    private Timestamp lastModifiedDate;
+    private OffsetDateTime lastModifiedDate;
 
     // the following are returned in the DTO returned
     @NotNull
@@ -40,8 +37,9 @@ public class ChemicalDTO {
     private String CAS_reg;
 
     @NotBlank
+    @Size(min = 1)
     private String name;
 
-    @Positive
+    @NotNull
     private Integer stockQuantity;
 }

@@ -39,7 +39,8 @@ public class ChemicalController {
         chemicalRepository.findById(chemicals_Id).ifPresent(chemical -> {
             chemical.setCAS_reg(chemicalDTO.getCAS_reg());
             chemical.setName(chemicalDTO.getName());
-            chemical.setStockQuantity(chemical.getStockQuantity() + chemicalDTO.getStockQuantity());
+            chemical.setStockQuantity(chemicalDTO.getStockQuantity());
+            chemical.setReagentState(chemicalDTO.getReagentState());
 
             chemicalRepository.save(chemical);
         });

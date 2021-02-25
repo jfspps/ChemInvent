@@ -88,6 +88,13 @@
             <artifactId>springdoc-openapi-ui</artifactId>
             <version>1.5.4</version>
         </dependency>
+
+<!--        Needed for Constraint validation-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -117,6 +124,7 @@
                     </dependency>
                 </dependencies>
             </plugin>
+
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
